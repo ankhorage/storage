@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 
+import { areCapabilityCatalogsEqual } from '@ankhorage/capability';
 import type { Capability } from '@ankhorage/contracts/capability';
 import {
   STORAGE_LIST_INPUT_SCHEMA,
@@ -64,6 +65,6 @@ describe('storage capability catalog', () => {
       readonly ankh: { readonly capabilities: readonly Capability[] };
     };
 
-    expect(packageManifest.ankh.capabilities).toEqual(CAPABILITIES);
+    expect(areCapabilityCatalogsEqual(packageManifest.ankh.capabilities, CAPABILITIES)).toBe(true);
   });
 });
