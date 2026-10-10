@@ -43,8 +43,8 @@
   ],
   "sideEffects": false,
   "devDependencies": {
-    "@ankhorage/devtools": "^2.3.9",
-    "@ankhorage/doctor": "0.14.11",
+    "@ankhorage/devtools": "^2.3.14",
+    "@ankhorage/doctor": "0.14.13",
     "@ankhorage/paradox": "0.3.3",
     "@types/bun": "^1.4.2",
     "@types/node": "26.6.5",
