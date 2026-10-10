@@ -1,0 +1,530 @@
+{
+  "name": "@ankhorage/storage",
+  "version": "0.1.0",
+  "description": "Provider-neutral object-storage execution and capabilities for Ankhorage.",
+  "homepage": "https://github.com/ankhorage/storage#readme",
+  "bugs": {
+    "url": "https://github.com/ankhorage/storage/issues"
+  },
+  "keywords": [
+    "ankhorage",
+    "capabilities",
+    "object-storage",
+    "storage"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ankhorage/storage.git"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./capabilities": {
+      "types": "./dist/capabilities/index.d.ts",
+      "import": "./dist/capabilities/index.js",
+      "default": "./dist/capabilities/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "sideEffects": false,
+  "devDependencies": {
+    "@ankhorage/devtools": "^2.3.14",
+    "@ankhorage/doctor": "0.14.13",
+    "@ankhorage/paradox": "0.3.3",
+    "@types/bun": "^1.4.2",
+    "@types/node": "26.6.5",
+    "typescript": "6.0.3"
+  },
+  "scripts": {
+    "build": "bun run package:sync && tsc -p tsconfig.build.json",
+    "check-types": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "bun run check-types",
+    "docs": "paradox",
+    "doctor": "ankhorage-doctor validate .",
+    "lint": "ankhorage-eslint . --max-warnings=0",
+    "lint:fix": "ankhorage-eslint . --fix --max-warnings=0",
+    "format": "ankhorage-prettier --write .",
+    "format:check": "ankhorage-prettier --check .",
+    "knip:check": "ankhorage-knip",
+    "package:sync": "bun scripts/materializePackageCapabilities.ts",
+    "test": "bun test",
+    "test:packed": "bun run build && bun test tests/packedConsumer.test.ts",
+    "changeset": "ankhorage-changeset",
+    "changeset:status": "ankhorage-changeset status --since=origin/main",
+    "version-packages": "ankhorage-changeset version"
+  },
+  "packageManager": "bun@1.4.2",
+  "dependencies": {
+    "@ankhorage/contracts": "25.2.0"
+  },
+  "ankh": {
+    "category": "storage",
+    "capabilities": [
+      {
+        "id": "storage.upload",
+        "owner": "@ankhorage/storage",
+        "access": [
+          "invoke"
+        ],
+        "binding": {
+          "kind": "storage",
+          "bindableAs": []
+        },
+        "input": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "bucket",
+              "path",
+              "body"
+            ],
+            "properties": {
+              "storageId": {
+                "type": "string"
+              },
+              "bucket": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string",
+                "format": "base64"
+              },
+              "contentType": {
+                "type": "string"
+              },
+              "cacheControl": {
+                "type": "string"
+              },
+              "upsert": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "output": {
+          "schema": {
+            "oneOf": [
+              {
+                "type": "object",
+                "required": [
+                  "ok",
+                  "data"
+                ],
+                "properties": {
+                  "ok": {
+                    "const": true
+                  },
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "asset"
+                    ],
+                    "properties": {
+                      "asset": {
+                        "type": "object",
+                        "required": [
+                          "bucket",
+                          "path"
+                        ],
+                        "properties": {
+                          "storageId": {
+                            "type": "string"
+                          },
+                          "bucket": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "publicUrl": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "ok",
+                  "error"
+                ],
+                "properties": {
+                  "ok": {
+                    "const": false
+                  },
+                  "error": {
+                    "type": "object",
+                    "required": [
+                      "code",
+                      "message"
+                    ],
+                    "properties": {
+                      "code": {
+                        "type": "string"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "storage.remove",
+        "owner": "@ankhorage/storage",
+        "access": [
+          "invoke"
+        ],
+        "binding": {
+          "kind": "storage",
+          "bindableAs": []
+        },
+        "input": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "bucket",
+              "path"
+            ],
+            "properties": {
+              "storageId": {
+                "type": "string"
+              },
+              "bucket": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              }
+            },
+            "description": "Identifies the stored object to remove."
+          }
+        },
+        "output": {
+          "schema": {
+            "oneOf": [
+              {
+                "type": "object",
+                "required": [
+                  "ok"
+                ],
+                "properties": {
+                  "ok": {
+                    "const": true
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "ok",
+                  "error"
+                ],
+                "properties": {
+                  "ok": {
+                    "const": false
+                  },
+                  "error": {
+                    "type": "object",
+                    "required": [
+                      "code",
+                      "message"
+                    ],
+                    "properties": {
+                      "code": {
+                        "type": "string"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "storage.list",
+        "owner": "@ankhorage/storage",
+        "access": [
+          "read"
+        ],
+        "binding": {
+          "kind": "storage",
+          "bindableAs": []
+        },
+        "input": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "bucket"
+            ],
+            "properties": {
+              "storageId": {
+                "type": "string"
+              },
+              "bucket": {
+                "type": "string"
+              },
+              "prefix": {
+                "type": "string"
+              },
+              "cursor": {
+                "type": "string"
+              },
+              "limit": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "output": {
+          "schema": {
+            "oneOf": [
+              {
+                "type": "object",
+                "required": [
+                  "ok",
+                  "data"
+                ],
+                "properties": {
+                  "ok": {
+                    "const": true
+                  },
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "objects"
+                    ],
+                    "properties": {
+                      "objects": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "bucket",
+                            "path"
+                          ],
+                          "properties": {
+                            "storageId": {
+                              "type": "string"
+                            },
+                            "bucket": {
+                              "type": "string"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "contentType": {
+                              "type": "string"
+                            },
+                            "sizeBytes": {
+                              "type": "integer"
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            },
+                            "etag": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "nextCursor": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "ok",
+                  "error"
+                ],
+                "properties": {
+                  "ok": {
+                    "const": false
+                  },
+                  "error": {
+                    "type": "object",
+                    "required": [
+                      "code",
+                      "message"
+                    ],
+                    "properties": {
+                      "code": {
+                        "type": "string"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "storage.resolve",
+        "owner": "@ankhorage/storage",
+        "access": [
+          "read"
+        ],
+        "binding": {
+          "kind": "storage",
+          "bindableAs": []
+        },
+        "input": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "bucket",
+              "path"
+            ],
+            "properties": {
+              "storageId": {
+                "type": "string"
+              },
+              "bucket": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "access": {
+                "type": "string",
+                "enum": [
+                  "public",
+                  "signed"
+                ]
+              },
+              "expiresInSeconds": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "output": {
+          "schema": {
+            "oneOf": [
+              {
+                "type": "object",
+                "required": [
+                  "ok",
+                  "data"
+                ],
+                "properties": {
+                  "ok": {
+                    "const": true
+                  },
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "asset"
+                    ],
+                    "properties": {
+                      "asset": {
+                        "type": "object",
+                        "required": [
+                          "bucket",
+                          "path",
+                          "url",
+                          "access"
+                        ],
+                        "properties": {
+                          "storageId": {
+                            "type": "string"
+                          },
+                          "bucket": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "access": {
+                            "type": "string",
+                            "enum": [
+                              "public",
+                              "signed"
+                            ]
+                          },
+                          "expiresAt": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "ok",
+                  "error"
+                ],
+                "properties": {
+                  "ok": {
+                    "const": false
+                  },
+                  "error": {
+                    "type": "object",
+                    "required": [
+                      "code",
+                      "message"
+                    ],
+                    "properties": {
+                      "code": {
+                        "type": "string"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}
