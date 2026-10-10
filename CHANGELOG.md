@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1
+
+### Patch Changes
+
+- 4addacb: fix(storage): include capability validation in packed consumers
+
 ## 0.2.0
 
 ### Minor Changes
