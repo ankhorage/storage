@@ -1,4 +1,5 @@
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -32,6 +33,10 @@ test('packed fresh consumer imports every public entrypoint', async () => {
     expect(packedTarball).toBeDefined();
     await writeFile(join(consumerDirectory, 'package.json'), '{"type":"module"}\n');
     await runAsync(['bun', 'add', `./${packedTarball}`], consumerDirectory);
+    const requireFromStorage = createRequire(
+      join(consumerDirectory, 'node_modules', '@ankhorage', 'storage', 'package.json'),
+    );
+    expect(requireFromStorage.resolve('@ankhorage/capability')).toContain('@ankhorage/capability');
     await writeFile(
       join(consumerDirectory, 'consumer.ts'),
       `import type { StoragePort } from '@ankhorage/storage';
