@@ -1,6 +1,6 @@
 {
   "name": "@ankhorage/storage",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Provider-neutral object-storage execution and capabilities for Ankhorage.",
   "homepage": "https://github.com/ankhorage/storage#readme",
   "bugs": {

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.2
+
+### Patch Changes
+
+- b057502: Publish the neutral Storage owner against released Contracts 26.
+
 ## 0.2.1
 
 ### Patch Changes
