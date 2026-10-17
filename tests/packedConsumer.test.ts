@@ -36,7 +36,18 @@ test('packed fresh consumer imports every public entrypoint', async () => {
     const requireFromStorage = createRequire(
       join(consumerDirectory, 'node_modules', '@ankhorage', 'storage', 'package.json'),
     );
-    expect(requireFromStorage.resolve('@ankhorage/capability')).toContain('@ankhorage/capability');
+    const capabilityManifestPath = requireFromStorage.resolve('@ankhorage/capability/package.json');
+    const capabilityManifest = require(capabilityManifestPath) as {
+      dependencies: Record<string, string>;
+      version: string;
+    };
+    const contractsManifestPath = createRequire(capabilityManifestPath).resolve(
+      '@ankhorage/contracts/package.json',
+    );
+    const contractsManifest = require(contractsManifestPath) as { version: string };
+    expect(capabilityManifest.version).toBe('0.2.2');
+    expect(capabilityManifest.dependencies['@ankhorage/contracts']).toBe('^26.0.0');
+    expect(contractsManifest.version).toBe('26.0.0');
     await writeFile(
       join(consumerDirectory, 'consumer.ts'),
       `import type { StoragePort } from '@ankhorage/storage';
