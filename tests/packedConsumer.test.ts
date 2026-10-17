@@ -44,7 +44,9 @@ import { CAPABILITIES } from '@ankhorage/storage/capabilities';
 import packageManifest from '@ankhorage/storage/package.json' with { type: 'json' };
 
 type ConsumerStoragePort = StoragePort;
-if (CAPABILITIES.length !== 4 || packageManifest.name !== '@ankhorage/storage') throw new Error('public entrypoint failed');
+const IDs = ['storage.upload', 'storage.remove', 'storage.list', 'storage.resolve'];
+if (packageManifest.name !== '@ankhorage/storage' || packageManifest.dependencies['@ankhorage/contracts'] !== '26.0.0') throw new Error('Contracts 26 package boundary failed');
+if (CAPABILITIES.length !== IDs.length || !CAPABILITIES.every((capability, index) => capability.id === IDs[index] && capability.owner === '@ankhorage/storage')) throw new Error('canonical storage descriptors failed');
 void (undefined as ConsumerStoragePort | undefined);
 `,
     );
