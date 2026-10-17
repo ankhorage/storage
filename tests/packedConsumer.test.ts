@@ -36,7 +36,18 @@ test('packed fresh consumer imports every public entrypoint', async () => {
     const requireFromStorage = createRequire(
       join(consumerDirectory, 'node_modules', '@ankhorage', 'storage', 'package.json'),
     );
-    expect(requireFromStorage.resolve('@ankhorage/capability')).toContain('@ankhorage/capability');
+    const capabilityManifestPath = requireFromStorage.resolve('@ankhorage/capability/package.json');
+    const capabilityManifest = require(capabilityManifestPath) as {
+      dependencies: Record<string, string>;
+      version: string;
+    };
+    const contractsManifestPath = createRequire(capabilityManifestPath).resolve(
+      '@ankhorage/contracts/package.json',
+    );
+    const contractsManifest = require(contractsManifestPath) as { version: string };
+    expect(capabilityManifest.version).toBe('0.2.2');
+    expect(capabilityManifest.dependencies['@ankhorage/contracts']).toBe('^26.0.0');
+    expect(contractsManifest.version).toBe('26.0.0');
     await writeFile(
       join(consumerDirectory, 'consumer.ts'),
       `import type { StoragePort } from '@ankhorage/storage';
@@ -44,7 +55,9 @@ import { CAPABILITIES } from '@ankhorage/storage/capabilities';
 import packageManifest from '@ankhorage/storage/package.json' with { type: 'json' };
 
 type ConsumerStoragePort = StoragePort;
-if (CAPABILITIES.length !== 4 || packageManifest.name !== '@ankhorage/storage') throw new Error('public entrypoint failed');
+const IDs = ['storage.upload', 'storage.remove', 'storage.list', 'storage.resolve'];
+if (packageManifest.name !== '@ankhorage/storage' || packageManifest.dependencies['@ankhorage/contracts'] !== '26.0.0') throw new Error('Contracts 26 package boundary failed');
+if (CAPABILITIES.length !== IDs.length || !CAPABILITIES.every((capability, index) => capability.id === IDs[index] && capability.owner === '@ankhorage/storage')) throw new Error('canonical storage descriptors failed');
 void (undefined as ConsumerStoragePort | undefined);
 `,
     );
