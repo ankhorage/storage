@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.3
+
+### Patch Changes
+
+- af09b21: Add canonical repository metadata for package discovery and documentation.
+
 ## 0.2.2
 
 ### Patch Changes
