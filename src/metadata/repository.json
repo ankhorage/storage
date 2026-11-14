@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "kind": "library",
+  "title": "Ankhorage Storage",
+  "summary": "Defines provider-neutral object-storage operations, capability descriptors, and the StoragePort boundary.",
+  "purpose": "Provide common upload, removal, listing, and URL-resolution operations so applications can use object storage without coupling to a provider SDK.",
+  "domain": "object storage capabilities and provider-neutral ports",
+  "responsibilities": ["Publish the storage upload, remove, list, and resolve capability catalog.", "Define the StoragePort boundary for provider-specific storage adapters.", "Use portable storage contracts at the public capability boundary."],
+  "boundaries": ["Does not implement a concrete object-storage provider client or credential integration.", "Does not select or compose a storage adapter for an application.", "Does not persist application-specific asset workflows."],
+  "audience": ["Application and runtime authors that invoke provider-neutral object storage.", "Maintainers of provider adapters that implement StoragePort."],
+  "useCases": ["Describe an object upload without selecting a storage provider.", "List, remove, or resolve stored objects through common operations.", "Implement a storage provider adapter against the published StoragePort."],
+  "architecture": {"role": "Provider-neutral storage boundary library with explicit port and capability catalog.", "invariants": ["Concrete provider behavior remains behind adapters.", "Capability inputs and outputs use published portable contracts.", "Consumers use public package exports rather than provider-specific internals."]},
+  "constraints": {"limitations": ["Applications must configure a concrete storage adapter separately.", "The package does not perform storage I/O by itself."]}
+}
