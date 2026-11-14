@@ -1,5 +1,5 @@
 ---
-"@ankhorage/storage": patch
+'@ankhorage/storage': patch
 ---
 
 Add canonical repository metadata for package discovery and documentation.
